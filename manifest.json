@@ -4,7 +4,7 @@
   "version": "1.0",
   "description": "In a world where gems and profile pictures were at war. One extension to rule them all and unite the kingdoms in harmony... *dan da dad ad adandand adnan* Ho-Oh!!!!!!!!",
   "icons": {
-    "48": "icons/border-48.png"
+    "48": "icons/icon2.png"
   },
 
   "content_scripts": [
