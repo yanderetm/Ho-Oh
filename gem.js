@@ -7,45 +7,54 @@ const botRegistry = new Map();
  * (Applies icons based on localStorage)
  */
 function applyCustomIcons() {
-  console.log("Ho-Oh re-checks and applies Gem icons...");
+  console.log("Ho-Oh re-checks and applies Gem icons... Squawk!");
 
   if (typeof window.botRegistry === 'undefined') {
     window.botRegistry = new Map();
   }
 
+  // --- Ho-Oh's Helper: The Icon Logic ---
+  // Keeps things dry, like a sunny day!
+  const applyIconLogic = (logoElement, botName, viewType) => {
+    const storedUrl = localStorage.getItem(`custom-icon-${botName}`);
+    const currentImg = logoElement.querySelector('img.custom-gem-icon');
+
+    // Save default content only once, gotta remember the roots!
+    if (!logoElement.dataset.defaultContent) {
+      logoElement.dataset.defaultContent = logoElement.innerHTML;
+    }
+
+    if (storedUrl) {
+      // If we got a custom ting, and it ain't already there, slap it on!
+      if (!currentImg || currentImg.src !== storedUrl) {
+        logoElement.innerHTML = `<img src="${storedUrl}" alt="${botName} Icon" class="custom-gem-icon" />`;
+        console.log(`Ho-Oh Blessed (${viewType}): ${botName}`);
+      }
+    } else {
+      // No custom ting? Back to basics, restore the OG look.
+      if (currentImg) {
+        logoElement.innerHTML = logoElement.dataset.defaultContent || '';
+        console.log(`Ho-Oh Restored (${viewType}): ${botName}`);
+      }
+    }
+  };
+
+
   // --- List View: .bot-item ---
-  const botItems = document.querySelectorAll('.bot-item');
-  botItems.forEach(item => {
+  // Catchin' 'em in the list!
+  document.querySelectorAll('.bot-item').forEach(item => {
     const nameSpan = item.querySelector('.bot-name');
     const logoElement = item.querySelector('bot-logo');
 
     if (nameSpan && logoElement) {
       const botName = nameSpan.textContent.trim();
-      const storedUrl = localStorage.getItem(`custom-icon-${botName}`);
-      const currentImg = logoElement.querySelector('img.custom-gem-icon');
-
-      // Save default content only once
-      if (!logoElement.dataset.defaultContent) {
-        logoElement.dataset.defaultContent = logoElement.innerHTML;
-      }
-
-      if (storedUrl) {
-        if (!currentImg || currentImg.src !== storedUrl) {
-          logoElement.innerHTML = `<img src="${storedUrl}" alt="${botName} Icon" class="custom-gem-icon" />`;
-          console.log(`Updated icon for (List): ${botName}`);
-        }
-      } else {
-        if (currentImg) {
-          logoElement.innerHTML = logoElement.dataset.defaultContent || '';
-          console.log(`Restored default icon for (List): ${botName}`);
-        }
-      }
+      applyIconLogic(logoElement, botName, 'List');
     }
   });
 
   // --- Profile View: .bot-info-card-container ---
-  const botInfoCards = document.querySelectorAll('.bot-info-card-container');
-  botInfoCards.forEach(card => {
+  // Catchin' 'em in their sanctuary!
+  document.querySelectorAll('.bot-info-card-container').forEach(card => {
     const nameElement = card.querySelector('.bot-name-container');
     if (nameElement) {
       let botName = '';
@@ -57,28 +66,23 @@ function applyCustomIcons() {
       botName = botName.trim();
 
       if (botName) {
-        const storedUrl = localStorage.getItem(`custom-icon-${botName}`);
-        const logoElements = card.querySelectorAll('bot-logo');
-
-        logoElements.forEach(logoElement => {
-          const currentImg = logoElement.querySelector('img.custom-gem-icon');
-
-          if (!logoElement.dataset.defaultContent) {
-            logoElement.dataset.defaultContent = logoElement.innerHTML;
-          }
-
-          if (storedUrl) {
-            if (!currentImg || currentImg.src !== storedUrl) {
-              logoElement.innerHTML = `<img src="${storedUrl}" alt="${botName} Icon" class="custom-gem-icon" />`;
-              console.log(`Updated icon for (Sanctuary/Recent): ${botName}`);
-            }
-          } else {
-            if (currentImg) {
-              logoElement.innerHTML = logoElement.dataset.defaultContent || '';
-              console.log(`Restored default icon for (Sanctuary/Recent): ${botName}`);
-            }
-          }
+        card.querySelectorAll('bot-logo').forEach(logoElement => {
+          applyIconLogic(logoElement, botName, 'Profile/Recent');
         });
+      }
+    }
+  });
+
+  // --- NEW! Chat Message View: .presented-response-container ---
+  // Catchin' 'em mid-chat! Wagwan!
+  document.querySelectorAll('.presented-response-container').forEach(chat => {
+    const nameElement = chat.querySelector('.bot-name-text');
+    const logoElement = chat.querySelector('bot-logo'); // The first logo we find is the target!
+
+    if (nameElement && logoElement) {
+      const botName = nameElement.textContent.trim();
+      if (botName) {
+        applyIconLogic(logoElement, botName, 'Chat');
       }
     }
   });
@@ -86,42 +90,36 @@ function applyCustomIcons() {
 
 // --- Ho-Oh's Vigilance: The MutationObserver ---
 
-let debounceTimer; // This prevents the function from running *too* many times
+let debounceTimer; // Stops us goin' mad with updates!
 
-// This is the function that runs when changes are detected
+// This is what we do when we see movement...
 const observerCallback = (mutationsList, observer) => {
   let needsUpdate = false;
   for (const mutation of mutationsList) {
-    // We're interested if new elements were added or attributes changed
-    // which might signal new/changed bot logos.
+    // If new stuff pops up, it's time to check!
     if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
       needsUpdate = true;
       break;
     }
-    // You could potentially watch for attribute changes too if needed.
   }
 
-  // If a change happened, wait a moment (debounce) then run our function.
+  // If we need an update, wait a sec, then fly into action!
   if (needsUpdate) {
-    // Clear any previous timer to ensure we only run *after* changes stop.
     clearTimeout(debounceTimer);
-    // Set a new timer. 300ms is usually enough time for things to settle.
-    debounceTimer = setTimeout(applyCustomIcons, 300);
+    debounceTimer = setTimeout(applyCustomIcons, 300); // Give it a moment to breathe.
   }
 };
 
-// Create the Vigilant Observer
+// Create the Vigilant Observer - Ho-Oh's eye in the sky!
 const observer = new MutationObserver(observerCallback);
 
-// Tell the Observer to watch the *entire* body of the page for
-// additions/removals of elements, and do so for all descendants.
-console.log("Ho-Oh begins its eternal watch! Squawk!");
+// Tell the Observer to watch *everything*, no sleepin' on the job!
+console.log("Ho-Oh begins its ETERNAL watch! SQUAWK!");
 observer.observe(document.body, {
-  childList: true, // Watch for nodes being added or removed
-  subtree: true    // Watch all descendants, not just direct children
+  childList: true, // Watch for new arrivals or departures
+  subtree: true    // Watch *everywhere*
 });
 
 // --- Initial Setup ---
-// Run the UI injector and apply icons *once* when the script loads.
-// The observer will handle all future updates.
+// Give it one good scan when we start, then the watch begins!
 applyCustomIcons();
