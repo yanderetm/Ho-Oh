@@ -27,13 +27,25 @@ function applyCustomIcons() {
     if (storedUrl) {
       // If we got a custom ting, and it ain't already there, slap it on!
       if (!currentImg || currentImg.src !== storedUrl) {
-        logoElement.innerHTML = `<img src="${storedUrl}" alt="${botName} Icon" class="custom-gem-icon" />`;
+        while (logoElement.firstChild) {
+          logoElement.removeChild(logoElement.firstChild);
+        }
+
+        // Create safe img element
+        const img = document.createElement('img');
+        img.src = storedUrl;
+        img.alt = `${botName} Icon`;
+        img.className = 'custom-gem-icon';
+
+        logoElement.appendChild(img);
+
         console.log(`Ho-Oh Blessed (${viewType}): ${botName}`);
       }
     } else {
       // No custom ting? Back to basics, restore the OG look.
-      if (currentImg) {
-        logoElement.innerHTML = logoElement.dataset.defaultContent || '';
+      if (currentImg && logoElement._originalChildren) {
+        // Restore original DOM nodes safely
+        logoElement.replaceChildren(...logoElement._originalChildren.map(node => node.cloneNode(true)));
         console.log(`Ho-Oh Restored (${viewType}): ${botName}`);
       }
     }
