@@ -1,0 +1,25 @@
+/* devtools/panel.css */
+#hooh-dev-panel {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  background: rgba(0,0,0,0.8);
+  padding: 10px;
+  color: white;
+  font-family: sans-serif;
+  z-index: 9999;
+  border-radius: 6px;
+}
+
+#hooh-dev-panel button {
+  background: #ff4444;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#hooh-dev-panel button:hover {
+  background: #cc0000;
+}

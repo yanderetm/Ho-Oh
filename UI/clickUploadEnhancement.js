@@ -139,24 +139,42 @@ function enhanceAllBotLogos() {
 
         const botName = nameSpan.textContent.trim();
 
-        const button = document.createElement('button');
-        button.className = 'mat-mdc-menu-item mat-focus-indicator change-icon-button';
-        button.setAttribute('role', 'menuitem');
-        button.tabIndex = 0;
-
-        button.innerHTML = `
+        // --- Change Icon Button ---
+        const changeButton = document.createElement('button');
+        changeButton.className = 'mat-mdc-menu-item mat-focus-indicator change-icon-button';
+        changeButton.setAttribute('role', 'menuitem');
+        changeButton.tabIndex = 0;
+        changeButton.innerHTML = `
           <mat-icon class="mat-icon notranslate gds-icon-l google-symbols mat-ligature-font mat-icon-no-color" aria-hidden="true">image</mat-icon>
           <span class="mat-mdc-menu-item-text"><span class="gds-body-m">Change Icon</span></span>
           <div class="mat-ripple mat-mdc-menu-ripple"></div>
         `;
-
-        button.addEventListener('click', () => {
+        changeButton.addEventListener('click', () => {
           triggerImageUpload(botName);
+        });
+
+        // --- Remove Icon Button ---
+        const removeButton = document.createElement('button');
+        removeButton.className = 'mat-mdc-menu-item mat-focus-indicator remove-icon-button';
+        removeButton.setAttribute('role', 'menuitem');
+        removeButton.tabIndex = 0;
+        removeButton.innerHTML = `
+          <mat-icon class="mat-icon notranslate gds-icon-l google-symbols mat-ligature-font mat-icon-no-color" aria-hidden="true">delete</mat-icon>
+          <span class="mat-mdc-menu-item-text"><span class="gds-body-m">Remove Picture</span></span>
+          <div class="mat-ripple mat-mdc-menu-ripple"></div>
+        `;
+        removeButton.addEventListener('click', () => {
+          localStorage.removeItem(`custom-icon-${botName}`);
+          if (typeof applyCustomIcons === 'function') {
+            applyCustomIcons();
+          }
+          console.log(`Ho-Oh: Removed icon for ${botName}`);
         });
 
         const content = menu.querySelector('.mat-mdc-menu-content');
         if (content) {
-          content.appendChild(button);
+          content.appendChild(changeButton);
+          content.appendChild(removeButton);
           menu.dataset.iconButtonInjected = 'true';
         }
       });

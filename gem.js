@@ -13,32 +13,37 @@ function applyCustomIcons() {
     window.botRegistry = new Map();
   }
 
-  // --- Logic for .bot-item (List View Gems) ---
+  // --- List View: .bot-item ---
   const botItems = document.querySelectorAll('.bot-item');
   botItems.forEach(item => {
     const nameSpan = item.querySelector('.bot-name');
     const logoElement = item.querySelector('bot-logo');
 
-    // We removed the "!logoElement.querySelector('img.custom-gem-icon')" check!
     if (nameSpan && logoElement) {
       const botName = nameSpan.textContent.trim();
       const storedUrl = localStorage.getItem(`custom-icon-${botName}`);
+      const currentImg = logoElement.querySelector('img.custom-gem-icon');
+
+      // Save default content only once
+      if (!logoElement.dataset.defaultContent) {
+        logoElement.dataset.defaultContent = logoElement.innerHTML;
+      }
 
       if (storedUrl) {
-        // Get the current image source, if any
-        const currentImg = logoElement.querySelector('img.custom-gem-icon');
-        // Only update if no image exists OR if the source is different
         if (!currentImg || currentImg.src !== storedUrl) {
           logoElement.innerHTML = `<img src="${storedUrl}" alt="${botName} Icon" class="custom-gem-icon" />`;
-          // Note: Styles are now handled by your injected CSS in clickUploadEnhancement.js
           console.log(`Updated icon for (List): ${botName}`);
         }
+      } else {
+        if (currentImg) {
+          logoElement.innerHTML = logoElement.dataset.defaultContent || '';
+          console.log(`Restored default icon for (List): ${botName}`);
+        }
       }
-      // Optional: Add logic here to revert to default if storedUrl is null but an img exists.
     }
   });
 
-  // --- Logic for .bot-info-card-container (Gem Profile View) ---
+  // --- Profile View: .bot-info-card-container ---
   const botInfoCards = document.querySelectorAll('.bot-info-card-container');
   botInfoCards.forEach(card => {
     const nameElement = card.querySelector('.bot-name-container');
@@ -52,22 +57,28 @@ function applyCustomIcons() {
       botName = botName.trim();
 
       if (botName) {
-        const logoElements = card.querySelectorAll('bot-logo');
         const storedUrl = localStorage.getItem(`custom-icon-${botName}`);
+        const logoElements = card.querySelectorAll('bot-logo');
 
-        if (storedUrl) {
-          logoElements.forEach(logoElement => {
-            // Get the current image source, if any
-            const currentImg = logoElement.querySelector('img.custom-gem-icon');
-            // Only update if no image exists OR if the source is different
+        logoElements.forEach(logoElement => {
+          const currentImg = logoElement.querySelector('img.custom-gem-icon');
+
+          if (!logoElement.dataset.defaultContent) {
+            logoElement.dataset.defaultContent = logoElement.innerHTML;
+          }
+
+          if (storedUrl) {
             if (!currentImg || currentImg.src !== storedUrl) {
               logoElement.innerHTML = `<img src="${storedUrl}" alt="${botName} Icon" class="custom-gem-icon" />`;
-              // Note: Styles are now handled by your injected CSS in clickUploadEnhancement.js
               console.log(`Updated icon for (Sanctuary/Recent): ${botName}`);
             }
-          });
-        }
-        // Optional: Add logic here to revert to default.
+          } else {
+            if (currentImg) {
+              logoElement.innerHTML = logoElement.dataset.defaultContent || '';
+              console.log(`Restored default icon for (Sanctuary/Recent): ${botName}`);
+            }
+          }
+        });
       }
     }
   });
