@@ -60,63 +60,6 @@ function applyCustomIcons() {
   });
 }
 
-/**
- * Injects the UI for uploading custom icons.
- */
-function injectUploaderUI() {
-  // Check if UI already exists to avoid duplicates
-  if (document.getElementById('gemIconUploaderPanel')) {
-    return;
-  }
-
-  const panel = document.createElement('div');
-  panel.id = 'gemIconUploaderPanel'; // Give it an ID
-  panel.style = `
-    position: fixed; bottom: 20px; right: 20px;
-    background: #f0f4f9; border: 1px solid #c0c6ce; border-radius: 8px;
-    padding: 15px; z-index: 10000; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    font-family: 'Google Sans', sans-serif; color: #3c4043;
-  `;
-
-  panel.innerHTML = `
-    <h3 style="margin-top:0; margin-bottom:10px; font-weight: 500;">Gem Icon Uploader</h3>
-    <div style="margin-bottom: 10px;">
-      <label for="botNameInput" style="display:block; margin-bottom:5px; font-size:14px;">Bot Name:</label>
-      <input type="text" id="botNameInput" style="width: 95%; padding: 8px; border: 1px solid #c0c6ce; border-radius: 4px;" />
-    </div>
-    <div style="margin-bottom: 15px;">
-      <label for="botImageInput" style="display:block; margin-bottom:5px; font-size:14px;">Upload Image:</label>
-      <input type="file" id="botImageInput" accept="image/*" style="font-size:13px;" />
-    </div>
-    <button id="uploadBtn" style="padding: 10px 15px; background-color: #1a73e8; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">Apply Icon</button>
-  `;
-
-  document.body.appendChild(panel);
-
-  document.getElementById('uploadBtn').addEventListener('click', () => {
-    const botNameInput = document.getElementById('botNameInput');
-    const fileInput = document.getElementById('botImageInput');
-    const botName = botNameInput.value.trim();
-    const file = fileInput.files[0];
-
-    if (!botName || !file) {
-      alert('Please enter a bot name and select an image.');
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      localStorage.setItem(`custom-icon-${botName}`, e.target.result);
-      alert(`Icon for ${botName} saved! It will be applied shortly.`);
-      applyCustomIcons(); // Immediately apply
-      // Clear inputs for next use
-      botNameInput.value = '';
-      fileInput.value = '';
-    };
-    reader.readAsDataURL(file);
-  });
-}
-
 // --- Ho-Oh's Vigilance: The MutationObserver ---
 
 let debounceTimer; // This prevents the function from running *too* many times
@@ -157,5 +100,4 @@ observer.observe(document.body, {
 // --- Initial Setup ---
 // Run the UI injector and apply icons *once* when the script loads.
 // The observer will handle all future updates.
-injectUploaderUI();
 applyCustomIcons();
