@@ -7,9 +7,8 @@ const botRegistry = new Map();
  * (Applies icons based on localStorage)
  */
 function applyCustomIcons() {
-  console.log("Ho-Oh re-checks for shiny Gems...");
+  console.log("Ho-Oh re-checks and applies Gem icons...");
 
-  // If botRegistry was somehow lost, recreate it.
   if (typeof window.botRegistry === 'undefined') {
     window.botRegistry = new Map();
   }
@@ -20,13 +19,22 @@ function applyCustomIcons() {
     const nameSpan = item.querySelector('.bot-name');
     const logoElement = item.querySelector('bot-logo');
 
-    if (nameSpan && logoElement && !logoElement.querySelector('img.custom-gem-icon')) { // Avoid re-applying if already done
+    // We removed the "!logoElement.querySelector('img.custom-gem-icon')" check!
+    if (nameSpan && logoElement) {
       const botName = nameSpan.textContent.trim();
       const storedUrl = localStorage.getItem(`custom-icon-${botName}`);
+
       if (storedUrl) {
-        logoElement.innerHTML = `<img src="${storedUrl}" alt="${botName} Icon" class="custom-gem-icon" style="width:100%; height:100%; object-fit:contain; border-radius: inherit;" />`;
-        console.log(`Applied icon to (List): ${botName}`);
+        // Get the current image source, if any
+        const currentImg = logoElement.querySelector('img.custom-gem-icon');
+        // Only update if no image exists OR if the source is different
+        if (!currentImg || currentImg.src !== storedUrl) {
+          logoElement.innerHTML = `<img src="${storedUrl}" alt="${botName} Icon" class="custom-gem-icon" />`;
+          // Note: Styles are now handled by your injected CSS in clickUploadEnhancement.js
+          console.log(`Updated icon for (List): ${botName}`);
+        }
       }
+      // Optional: Add logic here to revert to default if storedUrl is null but an img exists.
     }
   });
 
@@ -49,12 +57,17 @@ function applyCustomIcons() {
 
         if (storedUrl) {
           logoElements.forEach(logoElement => {
-            if (!logoElement.querySelector('img.custom-gem-icon')) { // Avoid re-applying
-              logoElement.innerHTML = `<img src="${storedUrl}" alt="${botName} Icon" class="custom-gem-icon" style="width:100%; height:100%; object-fit:contain; border-radius: inherit;" />`;
-              console.log(`Applied icon to (Sanctuary/Recent): ${botName}`);
+            // Get the current image source, if any
+            const currentImg = logoElement.querySelector('img.custom-gem-icon');
+            // Only update if no image exists OR if the source is different
+            if (!currentImg || currentImg.src !== storedUrl) {
+              logoElement.innerHTML = `<img src="${storedUrl}" alt="${botName} Icon" class="custom-gem-icon" />`;
+              // Note: Styles are now handled by your injected CSS in clickUploadEnhancement.js
+              console.log(`Updated icon for (Sanctuary/Recent): ${botName}`);
             }
           });
         }
+        // Optional: Add logic here to revert to default.
       }
     }
   });
