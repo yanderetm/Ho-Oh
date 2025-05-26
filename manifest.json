@@ -10,7 +10,7 @@
   "content_scripts": [
     {
       "matches": ["*://gemini.google.com/*"],
-      "js": ["gem.js"],
+      "js": ["gem.js", "UI/clickUploadEnhancement.js"],
       "css": ["styles.css"],
       "run_at": "document_idle" 
     }
