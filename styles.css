@@ -1,0 +1,31 @@
+/* --- Ho-Oh Icon --- */
+bot-logo.ho-oh-icon .bot-logo-text {
+  display: none !important; /* Hide the 'H' - KRYAH! */
+}
+
+bot-logo.ho-oh-icon {
+  /* Use 'browser-extension://<your-extension-id>/images/ho-oh.png' */
+  /* Or use the simpler path since we made it web accessible! */
+  background-image: url('images/ho-oh.png') !important;
+  background-size: contain !important; /* Or 'cover', experiment! */
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-color: transparent !important; /* No old color! */
+  border: none !important; /* No old border! */
+}
+
+/* --- Makima Icon --- */
+bot-logo.makima-icon .bot-logo-text {
+  display: none !important; /* Hide the 'M' */
+}
+
+bot-logo.makima-icon {
+  background-image: url('images/makima.png') !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-color: transparent !important;
+  border: none !important;
+}
+
+/* Add more styles for each bot class you defined in content.js! */
