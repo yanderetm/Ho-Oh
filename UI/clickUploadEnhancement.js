@@ -1,19 +1,25 @@
-// Inject consistent styling for bot logos
 const style = document.createElement('style');
 style.textContent = `
+  bot-logo {
+    position: relative;
+    display: block !important;
+    z-index: 10;
+  }
+
   bot-logo img {
     border-radius: 8px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, border-radius 0.2s ease;
     box-sizing: border-box;
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
+    pointer-events: auto;
+    z-index: 11;
   }
 
-  bot-logo img:hover {
-    transform: scale(1.04);
-    box-shadow: 0 0 0 2px #1a73e8;
-    background-color: rgba(66, 133, 244, 0.08);
+  bot-logo, bot-logo * {
+    overflow: visible !important;
+    pointer-events: auto !important;
   }
 
   .mat-mdc-menu-item.change-icon-button mat-icon {
@@ -22,32 +28,99 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// Enhance bot icons with click-to-upload functionality
-(function enhanceBotIconUpload() {
-  const iconObserver = new MutationObserver(() => {
-    const botItems = document.querySelectorAll('.bot-item');
+function hslToHex(h, s, l) {
+  const a = s * Math.min(l, 1 - l);
+  const f = n => {
+    const k = (n + h / 30) % 12;
+    const col = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+    return Math.round(255 * col).toString(16).padStart(2, '0');
+  };
+  return `#${f(0)}${f(8)}${f(4)}`;
+}
 
-    botItems.forEach(item => {
-      const nameSpan = item.querySelector('.bot-name');
-      const logoElement = item.querySelector('bot-logo');
+function hexWithAlpha(hex, alpha) {
+  const a = Math.round(alpha * 255).toString(16).padStart(2, '0');
+  return `${hex}${a}`;
+}
 
-      if (nameSpan && logoElement) {
-        const botName = nameSpan.textContent.trim();
+function enhanceLogoElement(logoElement, botName, preventDefaultClick = false) {
+  if (!botName) return;
 
-        if (!logoElement.dataset.uploadEnhanced) {
-          logoElement.style.cursor = 'pointer';
-          logoElement.title = 'Click to upload a custom icon for ' + botName;
-          logoElement.addEventListener('click', () => triggerImageUpload(botName));
-          logoElement.dataset.uploadEnhanced = 'true';
-        }
+  const hash = [...botName].reduce((acc, char) => char.charCodeAt(0) + ((acc << 5) - acc), 0);
+  const hue = Math.abs(hash) % 360;
+  const color = `hsl(${hue}, 70%, 55%)`;
+  const bgHex = hslToHex(hue, 0.7, 0.55);
+  const glow = hexWithAlpha(bgHex, 0.08);
+  const className = `bot-color-${hash}`;
+
+  logoElement.classList.add(className);
+  logoElement.dataset.enhancedFor = botName;
+  logoElement.style.cursor = 'pointer';
+  logoElement.title = 'Click to upload a custom icon for ' + botName;
+  logoElement.style.pointerEvents = 'auto';
+  logoElement.style.zIndex = '10000';
+  logoElement.style.position = 'relative';
+
+  logoElement.onclick = e => {
+    if (preventDefaultClick) e.stopImmediatePropagation();
+    triggerImageUpload(botName);
+  };
+
+  if (!document.querySelector(`style[data-bot-style="${className}"]`)) {
+    const dynamicStyle = document.createElement('style');
+    dynamicStyle.dataset.botStyle = className;
+    dynamicStyle.textContent = `
+      bot-logo.${className}:hover img {
+        box-shadow: 0 0 0 2px ${color};
+        background-color: ${glow};
+        border-radius: 50%;
+        transform: scale(1.2);
       }
-    });
+    `;
+    document.head.appendChild(dynamicStyle);
+  }
+}
+
+function enhanceAllBotLogos() {
+  document.querySelectorAll('.bot-item').forEach(item => {
+    const nameEl = item.querySelector('.bot-name');
+    const logoEl = item.querySelector('bot-logo');
+    if (nameEl && logoEl) {
+      enhanceLogoElement(logoEl, nameEl.textContent.trim(), true);
+    }
+  });
+
+  const selectedItem = Array.from(document.querySelectorAll('[class*="selected"]')).find(el =>
+    el.querySelector?.('.bot-name')
+  );
+
+  const selectedName = selectedItem?.querySelector('.bot-name')?.textContent.trim();
+  if (!selectedName) {
+    setTimeout(enhanceAllBotLogos, 100);
+    return;
+  }
+
+  const bigLogos = Array.from(document.querySelectorAll('bot-logo')).filter(
+    el => !el.closest('.bot-item')
+  );
+
+  if (!bigLogos.length) {
+    setTimeout(enhanceAllBotLogos, 100);
+    return;
+  }
+
+  bigLogos.forEach(el => enhanceLogoElement(el, selectedName));
+}
+
+(function monitorEnhance() {
+  const iconObserver = new MutationObserver(() => {
+    enhanceAllBotLogos();
   });
 
   iconObserver.observe(document.body, { childList: true, subtree: true });
+  enhanceAllBotLogos();
 })();
 
-// Watch for Gemini menu popups and inject "Change Icon" button
 (function enhanceBotMenuActions() {
   const menuObserver = new MutationObserver(() => {
     document.querySelectorAll('.mat-mdc-menu-panel.bot-actions-menu:not([data-icon-button-injected])')
@@ -92,7 +165,6 @@ document.head.appendChild(style);
   menuObserver.observe(document.body, { childList: true, subtree: true });
 })();
 
-// Core upload logic
 function triggerImageUpload(botName) {
   const fileInput = document.createElement('input');
   fileInput.type = 'file';
@@ -107,7 +179,7 @@ function triggerImageUpload(botName) {
     reader.onload = function(e) {
       localStorage.setItem(`custom-icon-${botName}`, e.target.result);
       if (typeof applyCustomIcons === 'function') {
-        applyCustomIcons(); // Refresh icons
+        applyCustomIcons();
       }
     };
     reader.readAsDataURL(file);
