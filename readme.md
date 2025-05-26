@@ -9,6 +9,16 @@ Ho-Oh | Your Personal Gemini Avatar ✨
 
 Just as the legendary Ho-Oh is said to bring joy, this extension aims to bring you the joy of a personal flair and visual warmth to your AI interactions. Make every chat session feel more connected and vibrant!
 
+<p align="center">
+  <a href="https://discord.gg/5qRFWngFzb">
+    <img src="https://dcbadge.limes.pink/api/server/https://discord.gg/5qRFWngFzb" />
+  </a>
+
+  <a href="https://firefox.gg/legit">
+    <img alt="Static Badge" src="https://img.shields.io/badge/Firefox-Get_Extension-Gray?style=for-the-badge&logo=firefoxbrowser&logoColor=hsla(0%2C0%25%2C100%25%2C1)&labelColor=hsla(32%2C74%25%2C50%25%2C1)&color=hsla(241%2C11%25%2C17%25%2C1)">
+  </a>
+</p>
+
 ---
 
 ## 🌟 Features
