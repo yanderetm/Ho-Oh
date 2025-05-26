@@ -20,7 +20,7 @@
       "run_at": "document_idle" 
     }
   ],
-  "applications": {
+  "browser_specific_settings": {
     "gecko": {
       "id": "Ho-Oh@addons.mozilla.org"
     }
