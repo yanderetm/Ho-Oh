@@ -4,7 +4,7 @@ const botRegistry = new Map();
 
 /**
  * Ho-Oh's Blessing for Custom Gem Icons!
- * (Applies icons based on localStorage)
+ * (Applies icons based on localStorage - Now with Bot List Row support!)
  */
 function applyCustomIcons() {
   console.log("Ho-Oh re-checks and applies Gem icons... Squawk! More power!");
@@ -13,53 +13,52 @@ function applyCustomIcons() {
     window.botRegistry = new Map();
   }
 
-  // --- Ho-Oh's Helper: The Icon Logic ---
-  // Keeps things fly and efficient!
+  // --- Ho-Oh's Helper: The Icon Logic (Refined Restore!) ---
   const applyIconLogic = (logoElement, botName, viewType) => {
     const storedUrl = localStorage.getItem(`custom-icon-${botName}`);
     const currentImg = logoElement.querySelector('img.custom-gem-icon');
 
-    // Save default content only once, gotta remember the roots!
+    // Save default content only once, if we haven't already!
     if (!logoElement.dataset.defaultContent) {
+      // We store the *original* HTML to put back later if needed.
       logoElement.dataset.defaultContent = logoElement.innerHTML;
+      console.log(`Ho-Oh Memorized Default for: ${botName}`);
     }
 
     if (storedUrl) {
-      // If we got a custom ting, and it ain't already there, slap it on!
+      // If we have a custom icon URL...
+      // And it's not the one currently shown (or no custom icon is shown)...
       if (!currentImg || currentImg.src !== storedUrl) {
+        // Clear out the old stuff first. Clean slate!
         while (logoElement.firstChild) {
           logoElement.removeChild(logoElement.firstChild);
         }
 
-        // Create safe img element
+        // Create the new image element. Make it shine!
         const img = document.createElement('img');
         img.src = storedUrl;
         img.alt = `${botName} Icon`;
-        img.className = 'custom-gem-icon';
-
+        img.className = 'custom-gem-icon'; // Keep class for CSS/selection
         logoElement.appendChild(img);
 
         console.log(`Ho-Oh Blessed (${viewType}): ${botName}`);
       }
     } else {
-      // No custom ting? Back to basics, restore the OG look.
-      if (currentImg && logoElement._originalChildren) {
-        // Restore original DOM nodes safely
-        logoElement.replaceChildren(...logoElement._originalChildren.map(node => node.cloneNode(true)));
+      // If there *isn't* a custom URL, but we *are* showing a custom icon...
+      if (currentImg) {
+        // Restore the original look using our saved HTML!
+        logoElement.innerHTML = logoElement.dataset.defaultContent;
         console.log(`Ho-Oh Restored (${viewType}): ${botName}`);
       }
     }
   };
 
-
   // --- List View: .bot-item ---
   document.querySelectorAll('.bot-item').forEach(item => {
     const nameSpan = item.querySelector('.bot-name');
     const logoElement = item.querySelector('bot-logo');
-
     if (nameSpan && logoElement) {
-      const botName = nameSpan.textContent.trim();
-      applyIconLogic(logoElement, botName, 'List');
+      applyIconLogic(logoElement, nameSpan.textContent.trim(), 'List');
     }
   });
 
@@ -69,12 +68,9 @@ function applyCustomIcons() {
     if (nameElement) {
       let botName = '';
       nameElement.childNodes.forEach(node => {
-        if (node.nodeType === Node.TEXT_NODE) {
-          botName += node.textContent;
-        }
+        if (node.nodeType === Node.TEXT_NODE) botName += node.textContent;
       });
       botName = botName.trim();
-
       if (botName) {
         card.querySelectorAll('bot-logo').forEach(logoElement => {
           applyIconLogic(logoElement, botName, 'Profile/Recent');
@@ -87,62 +83,66 @@ function applyCustomIcons() {
   document.querySelectorAll('.presented-response-container').forEach(chat => {
     const nameElement = chat.querySelector('.bot-name-text');
     const logoElement = chat.querySelector('bot-logo');
-
     if (nameElement && logoElement) {
-      const botName = nameElement.textContent.trim();
-      if (botName) {
-        applyIconLogic(logoElement, botName, 'Chat');
-      }
+      applyIconLogic(logoElement, nameElement.textContent.trim(), 'Chat');
     }
   });
 
-  // --- NEW! Small Chat Header View: .response-container-header ---
-  // Coverin' the small screens too, boom!
+  // --- Small Chat Header View: .response-container-header ---
   document.querySelectorAll('.response-container-header').forEach(header => {
     const nameElement = header.querySelector('.bot-name-text');
-    const logoElement = header.querySelector('bot-logo'); // Still gotta find that logo!
+    const logoElement = header.querySelector('bot-logo');
+    if (nameElement && logoElement) {
+      applyIconLogic(logoElement, nameElement.textContent.trim(), 'Chat Header');
+    }
+  });
+
+  // --- *** NEW! Bot List Row View: bot-list-row *** ---
+  // Gotta catch 'em all, even in *this* list! Squawk!
+  document.querySelectorAll('bot-list-row').forEach(row => {
+    const nameElement = row.querySelector('.bot-title .title'); // Find the title span
+    const logoElement = row.querySelector('bot-logo');         // Find the logo
 
     if (nameElement && logoElement) {
       const botName = nameElement.textContent.trim();
       if (botName) {
-        applyIconLogic(logoElement, botName, 'Chat Header');
+        applyIconLogic(logoElement, botName, 'Bot List Row');
       }
     }
   });
-}
+
+} // End of applyCustomIcons
 
 // --- Ho-Oh's Vigilance: The MutationObserver ---
+// (This part remains the same, watching over everything!)
 
-let debounceTimer; // Keepin' it chill.
+let debounceTimer;
 
-// This is what we do when we see movement...
 const observerCallback = (mutationsList, observer) => {
   let needsUpdate = false;
   for (const mutation of mutationsList) {
-    // If new stuff pops up, it's time to check!
     if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
       needsUpdate = true;
       break;
     }
   }
 
-  // If we need an update, wait a sec, then fly into action!
   if (needsUpdate) {
     clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(applyCustomIcons, 300);
+    debounceTimer = setTimeout(applyCustomIcons, 300); // 300ms debounce
   }
 };
 
-// Create the Vigilant Observer - Ho-Oh's eye in the sky!
 const observer = new MutationObserver(observerCallback);
 
-// Tell the Observer to watch *everything*, no sleepin' on the job!
-console.log("Ho-Oh's eternal watch CONTINUES! Squawk! Squawk!");
+console.log("Ho-Oh's eternal watch BROADENS! Squawk! Squawk!");
 observer.observe(document.body, {
-  childList: true, // Watch for new arrivals or departures
-  subtree: true    // Watch *everywhere*
+  childList: true,
+  subtree: true
 });
 
 // --- Initial Setup ---
-// Give it one good scan when we start, then the watch begins!
+// Run it once now!
 applyCustomIcons();
+
+// Remember to include your clickUploadEnhancement.js code as well!
