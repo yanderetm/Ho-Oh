@@ -19,6 +19,10 @@ Just as the legendary Ho-Oh is said to bring joy, this extension aims to bring y
   </a>
 </p>
 
+<p align="center">
+  <img alt="Hoe-Oh" src="https://i.imgur.com/5158ww1.gif" />
+</p>
+
 ---
 
 ## 🌟 Features
@@ -31,36 +35,14 @@ Just as the legendary Ho-Oh is said to bring joy, this extension aims to bring y
 
 ---
 
-## 📸 Screenshot
-
-*(totally real screenshot right here)*
-
-<p align="center">
-  <img src="https://screenshot.weebly.wix.squarespace.com/not-sponsored/indian-call-center/no-punjabi/no-scam" alt="Screenshot of Ho-Oh in action">
-</p>
-
----
-
 ## 🦊 Installation
 
 Getting Ho-Oh is as easy as a gentle breeze:
 
-1.  Navigate to the **[Ho-Oh Add-on Page](https://addons.mozilla.org/firefox/addon/PATENT-PENDING/)** on the official Firefox Add-ons store.
+1.  Navigate to the **[Ho-Oh Add-on Page](https://addons.mozilla.org/addon/ho-oh/)** on the official Firefox Add-ons store.
 2.  Click the **"+ Add to Firefox"** button.
 3.  Review the permissions and click **"Add"** when prompted.
 4.  That's it! Ho-Oh is now part of your browser.
-
----
-
-## 🖼️ Usage
-
-Yeeeeeeeeeeeeah we gotta work ts out first
-
----
-
-## 🤝 Contributing
-
-TBD
 
 ---
 
