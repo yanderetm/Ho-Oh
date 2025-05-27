@@ -20,7 +20,7 @@ Just as the legendary Ho-Oh is said to bring joy, this extension aims to bring y
 </p>
 
 <p align="center">
-  <img alt="Hoe-Oh" src="https://i.imgur.com/5158ww1.gif" />
+  <img alt="Hoe-Oh" src="https://github.com/Computerfile/FileZilla/blob/main/watch%20that%20hoe%20go.gif?raw=true" />
 </p>
 
 ---
